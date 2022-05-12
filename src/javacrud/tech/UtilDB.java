@@ -7,6 +7,8 @@ package javacrud.tech;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import javacrud.control.ConfigDAO;
+import javacrud.model.Configuration;
 
 /**
  *
@@ -15,18 +17,22 @@ import java.sql.DriverManager;
 public class UtilDB {
 
     static Connection con;
-    //static String driver = "com.mysql.cj.jdbc.Driver";
-    static String url = "jdbc:mysql://localhost:3306/gestion_utilisateur";
-    static String user = "root";
-    static String pass = "";
 
-    public static Connection getConnect() throws Exception {
-        if (con == null) {
+    public static Connection getConnect() throws Exception{
+        Configuration c = new Configuration();
+        XMLLocal wml = new XMLLocal();
+        ConfigDAO dao = new ConfigDAO();
+
+        String url = "jdbc:mysql://" + dao.getConfiguration().getMysqlHost() + ":"+ dao.getConfiguration().getMysqlPort() + "/" + dao.getConfiguration().getMysqlDb();
+        String user = dao.getConfiguration().getMysqlUser();
+        String pass = dao.getConfiguration().getMysqlPass();
+
+        System.out.println(user+ " : "+pass);
+        if(con == null){
             Class.forName("com.mysql.cj.jdbc.Driver");
             con = DriverManager.getConnection(url, user, pass);
         }
         return con;
-
     }
 
     public void closeConnect() throws Exception {
